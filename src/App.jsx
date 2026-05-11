@@ -1,7 +1,10 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Home from './pages/Home';
-import Login from './pages/Login';
+import Home from "./pages/Home";
+
+import Login from "./pages/Login";
+
+import Admin from "./pages/Admin";
 
 function App() {
 
@@ -11,15 +14,18 @@ function App() {
 
       <Routes>
 
-        <Route path='/' element={<Home />} />
+        <Route path="/" element={<Home />} />
 
-        <Route path='/login' element={<Login />} />
+        <Route path="/login" element={<Login />} />
+
+        <Route path="/admin" element={<Admin />} />
 
       </Routes>
 
     </BrowserRouter>
 
   );
+
 }
 
 export default App;
