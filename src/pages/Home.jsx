@@ -4,6 +4,7 @@ import axios from "axios";
 function Home() {
   const [foods, setFoods] = useState([]);
   const [cart, setCart] = useState([]);
+  const [showCart, setShowCart] = useState(false);
 
   useEffect(() => {
     fetchFoods();
@@ -33,6 +34,11 @@ function Home() {
     setCart(updatedCart);
   };
 
+  const totalAmount = cart.reduce(
+    (total, item) => total + item.price,
+    0
+  );
+
   return (
     <div
       style={{
@@ -52,12 +58,20 @@ function Home() {
           justifyContent: "space-between",
           alignItems: "center",
           fontSize: "24px",
-          fontWeight: "bold"
+          fontWeight: "bold",
+          position: "sticky",
+          top: "0",
+          zIndex: "1000"
         }}
       >
-        <h3>Food Delivery</h3>
+        <h3>Food Delivery 🍔</h3>
 
-        <h3>
+        <h3
+          onClick={() => setShowCart(!showCart)}
+          style={{
+            cursor: "pointer"
+          }}
+        >
           Cart 🛒 ({cart.length})
         </h3>
       </div>
@@ -92,8 +106,7 @@ function Home() {
               backgroundColor: "#1e1e1e",
               borderRadius: "15px",
               overflow: "hidden",
-              boxShadow: "0px 0px 10px rgba(255,255,255,0.2)",
-              transition: "0.3s"
+              boxShadow: "0px 0px 10px rgba(255,255,255,0.2)"
             }}
           >
             <img
@@ -132,7 +145,8 @@ function Home() {
                   borderRadius: "8px",
                   cursor: "pointer",
                   marginTop: "10px",
-                  fontWeight: "bold"
+                  fontWeight: "bold",
+                  width: "100%"
                 }}
               >
                 Add To Cart
@@ -142,69 +156,88 @@ function Home() {
         ))}
       </div>
 
-      {/* Cart Section */}
+      {/* Floating Cart */}
 
-      <h1
-        style={{
-          textAlign: "center",
-          marginTop: "20px",
-          fontSize: "45px"
-        }}
-      >
-        Cart Items 🛒
-      </h1>
-
-      <div
-        style={{
-          padding: "20px"
-        }}
-      >
-        {cart.length === 0 ? (
-          <h2 style={{ textAlign: "center" }}>
-            Cart is Empty 😢
+      {showCart && (
+        <div
+          style={{
+            position: "fixed",
+            top: "90px",
+            right: "20px",
+            width: "350px",
+            backgroundColor: "#1e1e1e",
+            padding: "20px",
+            borderRadius: "15px",
+            boxShadow: "0px 0px 15px rgba(255,255,255,0.3)",
+            maxHeight: "80vh",
+            overflowY: "auto",
+            zIndex: "1000"
+          }}
+        >
+          <h2
+            style={{
+              textAlign: "center",
+              marginBottom: "20px"
+            }}
+          >
+            Your Cart 🛒
           </h2>
-        ) : (
-          cart.map((item, index) => (
-            <div
-              key={index}
+
+          {cart.length === 0 ? (
+            <h3
               style={{
-                backgroundColor: "#1e1e1e",
-                margin: "15px auto",
-                padding: "20px",
-                borderRadius: "10px",
-                maxWidth: "600px",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center"
+                textAlign: "center"
               }}
             >
-              <div>
-                <h2>{item.name}</h2>
+              Cart is Empty 😢
+            </h3>
+          ) : (
+            <>
+              {cart.map((item, index) => (
+                <div
+                  key={index}
+                  style={{
+                    borderBottom: "1px solid gray",
+                    padding: "15px 0"
+                  }}
+                >
+                  <h3>{item.name}</h3>
 
-                <h3 style={{ color: "tomato" }}>
-                  ₹{item.price}
-                </h3>
-              </div>
+                  <h4 style={{ color: "tomato" }}>
+                    ₹{item.price}
+                  </h4>
 
-              <button
-                onClick={() =>
-                  removeFromCart(index)
-                }
+                  <button
+                    onClick={() =>
+                      removeFromCart(index)
+                    }
+                    style={{
+                      padding: "8px 12px",
+                      backgroundColor: "red",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+
+              <h2
                 style={{
-                  padding: "10px 15px",
-                  backgroundColor: "red",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "8px",
-                  cursor: "pointer"
+                  marginTop: "20px",
+                  textAlign: "center",
+                  color: "tomato"
                 }}
               >
-                Remove
-              </button>
-            </div>
-          ))
-        )}
-      </div>
+                Total: ₹{totalAmount}
+              </h2>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
