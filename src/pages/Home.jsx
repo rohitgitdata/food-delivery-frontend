@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 function Home() {
+
   const [foods, setFoods] = useState([]);
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
@@ -11,35 +12,110 @@ function Home() {
   }, []);
 
   const fetchFoods = async () => {
+
     try {
+
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/foods`
       );
 
       setFoods(response.data);
+
     } catch (error) {
+
       console.log(error);
+
     }
+
   };
+
+  // ADD TO CART
 
   const addToCart = (food) => {
-    setCart([...cart, food]);
-  };
 
-  const removeFromCart = (index) => {
-    const updatedCart = cart.filter(
-      (_, i) => i !== index
+    const itemExists = cart.find(
+      (item) => item._id === food._id
     );
 
-    setCart(updatedCart);
+    if (itemExists) {
+
+      const updatedCart = cart.map((item) =>
+
+        item._id === food._id
+
+          ? {
+              ...item,
+              quantity: item.quantity + 1
+            }
+
+          : item
+      );
+
+      setCart(updatedCart);
+
+    } else {
+
+      setCart([
+        ...cart,
+        {
+          ...food,
+          quantity: 1
+        }
+      ]);
+
+    }
+
   };
 
+  // REMOVE FROM CART
+
+  const removeFromCart = (id) => {
+
+    const updatedCart = cart
+      .map((item) => {
+
+        if (item._id === id) {
+
+          return {
+            ...item,
+            quantity: item.quantity - 1
+          };
+
+        }
+
+        return item;
+
+      })
+      .filter((item) => item.quantity > 0);
+
+    setCart(updatedCart);
+
+  };
+
+  // TOTAL PRICE
+
   const totalAmount = cart.reduce(
-    (total, item) => total + item.price,
+
+    (total, item) =>
+
+      total + item.price * item.quantity,
+
+    0
+  );
+
+  // TOTAL ITEMS COUNT
+
+  const totalItems = cart.reduce(
+
+    (total, item) =>
+
+      total + item.quantity,
+
     0
   );
 
   return (
+
     <div
       style={{
         backgroundColor: "#111",
@@ -48,7 +124,8 @@ function Home() {
         fontFamily: "Arial"
       }}
     >
-      {/* Navbar */}
+
+      {/* NAVBAR */}
 
       <div
         style={{
@@ -64,6 +141,7 @@ function Home() {
           zIndex: "1000"
         }}
       >
+
         <h3>Food Delivery 🍔</h3>
 
         <h3
@@ -72,11 +150,12 @@ function Home() {
             cursor: "pointer"
           }}
         >
-          Cart 🛒 ({cart.length})
+          Cart 🛒 ({totalItems})
         </h3>
+
       </div>
 
-      {/* Heading */}
+      {/* HEADING */}
 
       <h1
         style={{
@@ -88,7 +167,7 @@ function Home() {
         Food Items 🍕
       </h1>
 
-      {/* Food Grid */}
+      {/* FOOD GRID */}
 
       <div
         style={{
@@ -99,16 +178,21 @@ function Home() {
           padding: "30px"
         }}
       >
+
         {foods.map((food) => (
+
           <div
             key={food._id}
             style={{
               backgroundColor: "#1e1e1e",
               borderRadius: "15px",
               overflow: "hidden",
-              boxShadow: "0px 0px 10px rgba(255,255,255,0.2)"
+              boxShadow:
+                "0px 0px 10px rgba(255,255,255,0.2)",
+              transition: "0.3s"
             }}
           >
+
             <img
               src={food.image}
               alt={food.name}
@@ -120,6 +204,7 @@ function Home() {
             />
 
             <div style={{ padding: "15px" }}>
+
               <h2>{food.name}</h2>
 
               <p
@@ -135,30 +220,102 @@ function Home() {
                 ₹{food.price}
               </h2>
 
-              <button
-                onClick={() => addToCart(food)}
-                style={{
-                  padding: "12px 20px",
-                  backgroundColor: "tomato",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  marginTop: "10px",
-                  fontWeight: "bold",
-                  width: "100%"
-                }}
-              >
-                Add To Cart
-              </button>
+              {/* QUANTITY BUTTON */}
+
+              {cart.find(
+                (item) => item._id === food._id
+              ) ? (
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    backgroundColor: "tomato",
+                    borderRadius: "10px",
+                    padding: "10px",
+                    marginTop: "10px"
+                  }}
+                >
+
+                  <button
+                    onClick={() =>
+                      removeFromCart(food._id)
+                    }
+                    style={{
+                      background: "white",
+                      color: "tomato",
+                      border: "none",
+                      padding: "5px 12px",
+                      fontSize: "20px",
+                      borderRadius: "5px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    -
+                  </button>
+
+                  <h3>
+                    {
+                      cart.find(
+                        (item) =>
+                          item._id === food._id
+                      ).quantity
+                    }
+                  </h3>
+
+                  <button
+                    onClick={() =>
+                      addToCart(food)
+                    }
+                    style={{
+                      background: "white",
+                      color: "tomato",
+                      border: "none",
+                      padding: "5px 12px",
+                      fontSize: "20px",
+                      borderRadius: "5px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    +
+                  </button>
+
+                </div>
+
+              ) : (
+
+                <button
+                  onClick={() => addToCart(food)}
+                  style={{
+                    padding: "12px 20px",
+                    backgroundColor: "tomato",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    marginTop: "10px",
+                    fontWeight: "bold",
+                    width: "100%"
+                  }}
+                >
+                  Add To Cart
+                </button>
+
+              )}
+
             </div>
+
           </div>
+
         ))}
+
       </div>
 
-      {/* Floating Cart */}
+      {/* FLOATING CART */}
 
       {showCart && (
+
         <div
           style={{
             position: "fixed",
@@ -168,12 +325,14 @@ function Home() {
             backgroundColor: "#1e1e1e",
             padding: "20px",
             borderRadius: "15px",
-            boxShadow: "0px 0px 15px rgba(255,255,255,0.3)",
+            boxShadow:
+              "0px 0px 15px rgba(255,255,255,0.3)",
             maxHeight: "80vh",
             overflowY: "auto",
             zIndex: "1000"
           }}
         >
+
           <h2
             style={{
               textAlign: "center",
@@ -184,6 +343,7 @@ function Home() {
           </h2>
 
           {cart.length === 0 ? (
+
             <h3
               style={{
                 textAlign: "center"
@@ -191,38 +351,77 @@ function Home() {
             >
               Cart is Empty 😢
             </h3>
+
           ) : (
+
             <>
-              {cart.map((item, index) => (
+
+              {cart.map((item) => (
+
                 <div
-                  key={index}
+                  key={item._id}
                   style={{
                     borderBottom: "1px solid gray",
                     padding: "15px 0"
                   }}
                 >
-                  <h3>{item.name}</h3>
 
-                  <h4 style={{ color: "tomato" }}>
-                    ₹{item.price}
-                  </h4>
+                  <h3>
+                    {item.name} × {item.quantity}
+                  </h3>
 
-                  <button
-                    onClick={() =>
-                      removeFromCart(index)
-                    }
+                  <h4
                     style={{
-                      padding: "8px 12px",
-                      backgroundColor: "red",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer"
+                      color: "tomato"
                     }}
                   >
-                    Remove
-                  </button>
+                    ₹{item.price * item.quantity}
+                  </h4>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "10px",
+                      marginTop: "10px"
+                    }}
+                  >
+
+                    <button
+                      onClick={() =>
+                        removeFromCart(item._id)
+                      }
+                      style={{
+                        padding: "8px 15px",
+                        backgroundColor: "red",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer"
+                      }}
+                    >
+                      -
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        addToCart(item)
+                      }
+                      style={{
+                        padding: "8px 15px",
+                        backgroundColor: "green",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer"
+                      }}
+                    >
+                      +
+                    </button>
+
+                  </div>
+
                 </div>
+
               ))}
 
               <h2
@@ -234,12 +433,19 @@ function Home() {
               >
                 Total: ₹{totalAmount}
               </h2>
+
             </>
+
           )}
+
         </div>
+
       )}
+
     </div>
+
   );
+
 }
 
 export default Home;
