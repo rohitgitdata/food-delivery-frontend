@@ -4,6 +4,7 @@ import axios from "axios";
 function Home() {
 
   const [foods, setFoods] = useState([]);
+  const [cart, setCart] = useState([]);
 
   useEffect(() => {
     fetchFoods();
@@ -23,7 +24,7 @@ function Home() {
   };
 
   const addToCart = (food) => {
-    alert(food.name + " added to cart");
+    setCart([...cart, food]);
   };
 
   return (
@@ -40,7 +41,7 @@ function Home() {
         }}
       >
         <h3>Food Delivery</h3>
-        <h3>Cart</h3>
+        <h3>Cart ({cart.length})</h3>
       </div>
 
       <h1 style={{ textAlign: "center", marginTop: "20px" }}>
