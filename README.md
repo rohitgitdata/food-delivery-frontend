@@ -1,16 +1,151 @@
-# React + Vite
+# 🍔 Food Delivery MERN App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full stack Food Delivery Web Application built using the MERN Stack.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+# 🚀 Features
 
-## React Compiler
+## 👤 User Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- User Authentication
+- Login & Register
+- Browse Foods
+- Add To Cart
+- Quantity Management
+- Total Price Calculation
+- Floating Cart UI
+- Responsive Design
+- Toast Notifications
+- Loading Spinner
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 👑 Admin Features
+
+- Add Food
+- Edit Food
+- Delete Food
+- Manage Food Items
+
+---
+
+# 🛠️ Tech Stack
+
+## Frontend
+
+- React.js
+- Axios
+- React Router DOM
+- React Hot Toast
+
+## Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT Authentication
+
+---
+
+# 🔗 GitHub Repositories
+
+## Frontend Repository
+
+https://github.com/rohitgitdata/food-delivery-frontend
+
+---
+
+## Backend Repository
+
+https://github.com/rohitgitdata/food-delivery-backend
+
+---
+
+# 📦 Installation
+
+## Clone Frontend Repository
+
+```bash
+git clone https://github.com/rohitgitdata/food-delivery-frontend.git
+```
+
+## Clone Backend Repository
+
+```bash
+git clone https://github.com/rohitgitdata/food-delivery-backend.git
+```
+
+---
+
+# ⚙️ Frontend Setup
+
+```bash
+cd food-delivery-frontend
+npm install
+npm run dev
+```
+
+---
+
+# ⚙️ Backend Setup
+
+```bash
+cd food-delivery-backend
+npm install
+npm start
+```
+
+---
+
+# 🌍 Environment Variables
+
+## Frontend `.env`
+
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+---
+
+## Backend `.env`
+
+```env
+MONGO_URI=YOUR_MONGODB_URL
+PORT=5000
+JWT_SECRET=your_secret_key
+```
+
+---
+
+# 📸 Project Features
+
+- Home Page
+- Food Listing
+- Floating Cart
+- Admin Panel
+- Login & Register
+- Edit & Delete Foods
+- Responsive UI
+
+---
+
+# ✨ Future Improvements
+
+- Payment Gateway
+- Order Tracking
+- Search & Filters
+- Wishlist
+
+---
+
+# 👨‍💻 Author
+
+Rohit Kumar
+
+---
+
+# ⭐ If you like this project
+
+Give this repository a star ⭐
