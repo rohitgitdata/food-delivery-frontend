@@ -1,19 +1,25 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 function Home() {
 
   const [foods, setFoods] = useState([]);
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchFoods();
   }, []);
 
+  // FETCH FOODS
+
   const fetchFoods = async () => {
 
     try {
+
+      setLoading(true);
 
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/foods`
@@ -25,6 +31,10 @@ function Home() {
 
       console.log(error);
 
+    } finally {
+
+      setLoading(false);
+
     }
 
   };
@@ -32,6 +42,8 @@ function Home() {
   // ADD TO CART
 
   const addToCart = (food) => {
+
+    toast.success(`${food.name} Added 🍔`);
 
     const itemExists = cart.find(
       (item) => item._id === food._id
@@ -71,6 +83,8 @@ function Home() {
 
   const removeFromCart = (id) => {
 
+    toast.error("Item Removed ❌");
+
     const updatedCart = cart
       .map((item) => {
 
@@ -103,7 +117,7 @@ function Home() {
     0
   );
 
-  // TOTAL ITEMS COUNT
+  // TOTAL ITEMS
 
   const totalItems = cart.reduce(
 
@@ -130,24 +144,36 @@ function Home() {
       <div
         style={{
           background: "tomato",
-          padding: "20px",
+          padding: "15px 20px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          fontSize: "24px",
-          fontWeight: "bold",
           position: "sticky",
           top: "0",
-          zIndex: "1000"
+          zIndex: "1000",
+          flexWrap: "wrap"
         }}
       >
 
-        <h3>Food Delivery 🍔</h3>
+        <h2
+          style={{
+            fontSize:
+              window.innerWidth < 600
+                ? "20px"
+                : "28px"
+          }}
+        >
+          Food Delivery 🍔
+        </h2>
 
         <h3
           onClick={() => setShowCart(!showCart)}
           style={{
-            cursor: "pointer"
+            cursor: "pointer",
+            marginTop:
+              window.innerWidth < 600
+                ? "10px"
+                : "0"
           }}
         >
           Cart 🛒 ({totalItems})
@@ -161,156 +187,175 @@ function Home() {
         style={{
           textAlign: "center",
           paddingTop: "20px",
-          fontSize: "50px"
+          fontSize:
+            window.innerWidth < 600
+              ? "35px"
+              : "50px"
         }}
       >
         Food Items 🍕
       </h1>
 
-      {/* FOOD GRID */}
+      {/* LOADING */}
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns:
-            "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: "25px",
-          padding: "30px"
-        }}
-      >
+      {loading ? (
 
-        {foods.map((food) => (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "60vh",
+            fontSize: "35px",
+            color: "tomato",
+            fontWeight: "bold"
+          }}
+        >
+          Loading Foods 🍕...
+        </div>
+
+      ) : (
+
+        <>
+        
+          {/* FOOD GRID */}
 
           <div
-            key={food._id}
             style={{
-              backgroundColor: "#1e1e1e",
-              borderRadius: "15px",
-              overflow: "hidden",
-              boxShadow:
-                "0px 0px 10px rgba(255,255,255,0.2)",
-              transition: "0.3s"
+              display: "grid",
+              gridTemplateColumns:
+                "repeat(auto-fit,minmax(250px,1fr))",
+              gap: "25px",
+              padding: "20px"
             }}
           >
 
-            <img
-              src={food.image}
-              alt={food.name}
-              style={{
-                width: "100%",
-                height: "220px",
-                objectFit: "cover"
-              }}
-            />
+            {foods.map((food) => (
 
-            <div style={{ padding: "15px" }}>
-
-              <h2>{food.name}</h2>
-
-              <p
+              <div
+                key={food._id}
                 style={{
-                  color: "#ccc",
-                  minHeight: "50px"
+                  backgroundColor: "#1e1e1e",
+                  borderRadius: "15px",
+                  overflow: "hidden",
+                  boxShadow:
+                    "0px 0px 10px rgba(255,255,255,0.2)"
                 }}
               >
-                {food.description}
-              </p>
 
-              <h2 style={{ color: "tomato" }}>
-                ₹{food.price}
-              </h2>
-
-              {/* QUANTITY BUTTON */}
-
-              {cart.find(
-                (item) => item._id === food._id
-              ) ? (
-
-                <div
+                <img
+                  src={food.image}
+                  alt={food.name}
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    backgroundColor: "tomato",
-                    borderRadius: "10px",
-                    padding: "10px",
-                    marginTop: "10px"
+                    width: "100%",
+                    height: "220px",
+                    objectFit: "cover"
                   }}
-                >
+                />
 
-                  <button
-                    onClick={() =>
-                      removeFromCart(food._id)
-                    }
+                <div style={{ padding: "15px" }}>
+
+                  <h2>{food.name}</h2>
+
+                  <p
                     style={{
-                      background: "white",
-                      color: "tomato",
-                      border: "none",
-                      padding: "5px 12px",
-                      fontSize: "20px",
-                      borderRadius: "5px",
-                      cursor: "pointer"
+                      color: "#ccc",
+                      minHeight: "50px"
                     }}
                   >
-                    -
-                  </button>
+                    {food.description}
+                  </p>
 
-                  <h3>
-                    {
-                      cart.find(
-                        (item) =>
-                          item._id === food._id
-                      ).quantity
-                    }
-                  </h3>
-
-                  <button
-                    onClick={() =>
-                      addToCart(food)
-                    }
+                  <h2
                     style={{
-                      background: "white",
-                      color: "tomato",
-                      border: "none",
-                      padding: "5px 12px",
-                      fontSize: "20px",
-                      borderRadius: "5px",
-                      cursor: "pointer"
+                      color: "tomato"
                     }}
                   >
-                    +
-                  </button>
+                    ₹{food.price}
+                  </h2>
+
+                  {/* QUANTITY */}
+
+                  {cart.find(
+                    (item) =>
+                      item._id === food._id
+                  ) ? (
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        backgroundColor: "tomato",
+                        borderRadius: "10px",
+                        padding: "10px",
+                        marginTop: "10px"
+                      }}
+                    >
+
+                      <button
+                        onClick={() =>
+                          removeFromCart(food._id)
+                        }
+                        style={btnStyle}
+                      >
+                        -
+                      </button>
+
+                      <h3>
+                        {
+                          cart.find(
+                            (item) =>
+                              item._id === food._id
+                          ).quantity
+                        }
+                      </h3>
+
+                      <button
+                        onClick={() =>
+                          addToCart(food)
+                        }
+                        style={btnStyle}
+                      >
+                        +
+                      </button>
+
+                    </div>
+
+                  ) : (
+
+                    <button
+                      onClick={() =>
+                        addToCart(food)
+                      }
+                      style={{
+                        padding: "12px",
+                        backgroundColor: "tomato",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        marginTop: "10px",
+                        width: "100%",
+                        fontWeight: "bold"
+                      }}
+                    >
+                      Add To Cart
+                    </button>
+
+                  )}
 
                 </div>
 
-              ) : (
+              </div>
 
-                <button
-                  onClick={() => addToCart(food)}
-                  style={{
-                    padding: "12px 20px",
-                    backgroundColor: "tomato",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    marginTop: "10px",
-                    fontWeight: "bold",
-                    width: "100%"
-                  }}
-                >
-                  Add To Cart
-                </button>
-
-              )}
-
-            </div>
+            ))}
 
           </div>
 
-        ))}
+        </>
 
-      </div>
+      )}
 
       {/* FLOATING CART */}
 
@@ -320,8 +365,14 @@ function Home() {
           style={{
             position: "fixed",
             top: "90px",
-            right: "20px",
-            width: "350px",
+            right:
+              window.innerWidth < 600
+                ? "5%"
+                : "20px",
+            width:
+              window.innerWidth < 600
+                ? "90%"
+                : "350px",
             backgroundColor: "#1e1e1e",
             padding: "20px",
             borderRadius: "15px",
@@ -344,13 +395,40 @@ function Home() {
 
           {cart.length === 0 ? (
 
-            <h3
+            <div
               style={{
-                textAlign: "center"
+                textAlign: "center",
+                padding: "40px 20px"
               }}
             >
-              Cart is Empty 😢
-            </h3>
+
+              <div
+                style={{
+                  fontSize: "60px"
+                }}
+              >
+                🛒
+              </div>
+
+              <h2
+                style={{
+                  color: "tomato",
+                  marginTop: "10px"
+                }}
+              >
+               Your Cart is Empty 
+              </h2>
+                
+              <p
+                style={{
+                  color: "#f7f7f7",
+                  marginTop: "10px"
+                }}
+              >
+                 Add delicious food 🍕
+              </p>
+
+            </div>
 
           ) : (
 
@@ -361,7 +439,8 @@ function Home() {
                 <div
                   key={item._id}
                   style={{
-                    borderBottom: "1px solid gray",
+                    borderBottom:
+                      "1px solid gray",
                     padding: "15px 0"
                   }}
                 >
@@ -375,50 +454,10 @@ function Home() {
                       color: "tomato"
                     }}
                   >
-                    ₹{item.price * item.quantity}
+                    ₹
+                    {item.price *
+                      item.quantity}
                   </h4>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "10px",
-                      marginTop: "10px"
-                    }}
-                  >
-
-                    <button
-                      onClick={() =>
-                        removeFromCart(item._id)
-                      }
-                      style={{
-                        padding: "8px 15px",
-                        backgroundColor: "red",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer"
-                      }}
-                    >
-                      -
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        addToCart(item)
-                      }
-                      style={{
-                        padding: "8px 15px",
-                        backgroundColor: "green",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer"
-                      }}
-                    >
-                      +
-                    </button>
-
-                  </div>
 
                 </div>
 
@@ -447,5 +486,17 @@ function Home() {
   );
 
 }
+
+const btnStyle = {
+
+  background: "white",
+  color: "tomato",
+  border: "none",
+  padding: "5px 12px",
+  fontSize: "20px",
+  borderRadius: "5px",
+  cursor: "pointer"
+
+};
 
 export default Home;
